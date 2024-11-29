@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "core/base_event_handler.h"
+#include "core/disk_scanner.h"
 
 #include "common/file_record.hpp"
 #include "utils/log.h"
@@ -70,6 +71,12 @@ void base_event_handler::insert_pending_paths(
     pending_paths_.insert(pending_paths_.end(),
                     std::make_move_iterator(paths.begin()),
                     std::make_move_iterator(paths.end()));
+}
+
+void base_event_handler::insert_index_directory(std::filesystem::path dir) {
+    pool_.enqueue_detach([this, dir = std::move(dir)]() {
+        this->insert_pending_paths(anything::disk_scanner::scan(dir));
+    });
 }
 
 std::size_t base_event_handler::pending_paths_count() const {
@@ -195,7 +202,10 @@ void base_event_handler::timer_worker(int64_t interval) {
                 }
             }
 
-            anything::log::debug() << "path batch size: " << path_batch.size() << "\n";
+            if (path_batch.size() > 0) {
+                anything::log::debug() << "path batch size: " << path_batch.size() << "\n";
+            }
+
             for (auto&& path : path_batch) {
                 if (should_be_filtered(path)) {
                     continue;
@@ -203,7 +213,7 @@ void base_event_handler::timer_worker(int64_t interval) {
 
                 // Before insertion, check if the file actually exists locally to avoid re-adding an index for a recently removed path.
                 // - The document_exists check does not need to be real-time; it only needs to reflect the state at program startup to avoid
-                //   efficiency issues caused by thred synchronization. 
+                //   efficiency issues caused by thread synchronization. 
                 // - Since existing files without an index will not trigger new insertion events, only the initial state comparison is necessary.
                 // - Index integrity is considered only for insertion here; deletions are not checked individually, as that would be inefficient.
                 //   Instead, existence checks for indexed paths are handled at query time.
@@ -276,6 +286,5 @@ void base_event_handler::addPath(const QString& fullPath) {
 }
 
 void base_event_handler::index_files_in_directory(const QString& directory_path) {
-    (void)directory_path;
-    // index_manager_.
+    insert_index_directory(directory_path.toStdString());
 }

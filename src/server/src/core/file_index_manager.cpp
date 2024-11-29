@@ -186,7 +186,7 @@ QStringList file_index_manager::search(
 
         Collection<ScoreDocPtr> hits = collector->topDocs()->scoreDocs;
         if (offset >= hits.size()) {
-            log::debug() << "No more results(path:\"" << path.toStdString() << "\", keywork: \"" << keyword.toStdString() << "{}\").\n";
+            log::debug() << "No more results(path:\"" << path.toStdString() << "\", keywork: \"" << keyword.toStdString() << "\").\n";
             return {};
         }
 

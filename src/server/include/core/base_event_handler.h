@@ -10,7 +10,6 @@
 
 #include "common/anything_fwd.hpp"
 #include "common/fs_event.h"
-#include "core/disk_scanner.h"
 #include "core/file_index_manager.h"
 #include "core/mount_manager.h"
 #include "core/thread_pool.h"
@@ -51,7 +50,8 @@ protected:
     bool ignored_event(const std::string& path, bool ignored);
 
     void insert_pending_paths(std::vector<std::string> paths);
-
+    void insert_index_directory(std::filesystem::path dir);
+    
     std::size_t pending_paths_count() const;
 
     void refresh_mount_status();
@@ -98,9 +98,6 @@ public slots:
     void addPath(const QString& fullPath);
 
     void index_files_in_directory(const QString& directory_path);
-
-protected:
-    anything::disk_scanner scanner_;
 
 private:
     anything::mount_manager mnt_manager_;
