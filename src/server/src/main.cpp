@@ -13,6 +13,7 @@ int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
 
     log::set_level(log::level::all, true);
+    // log::set_to_file("/data/home/dxnu/.cache/findex/findex.log");
 
     event_listenser listenser;
     auto handler = std::make_shared<default_event_handler>();
@@ -24,6 +25,7 @@ int main(int argc, char* argv[]) {
     set_signal_handler(SIGINT, [&listenser, &handler, &app](int sig) {
         log::info() << "Interrupt signal (" << sig << ") received.\n";
         log::info() << "Performing cleanup tasks...\n";
+        disk_scanner::stop_scanning = true;
         listenser.stop_listening();
         handler->terminate_processing();
         app.exit();

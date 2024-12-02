@@ -30,6 +30,10 @@ std::vector<std::string> disk_scanner::scan(const fs::path& root) {
         if (std::filesystem::exists(it->path())) {
             records.push_back(it->path().string());
         }
+
+        if (disk_scanner::stop_scanning) {
+            break;
+        }
     }
 
     log::debug() << "Scanning " << root.string() << " completed\n";

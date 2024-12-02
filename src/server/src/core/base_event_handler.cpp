@@ -264,6 +264,33 @@ QStringList base_event_handler::search(const QString& path, const QString& keywo
             remove_index_delay(std::move(path));
         }
     }
+
+    return results;
+}
+
+QStringList base_event_handler::search(const QString& keywords) {
+    // Since there is no automatic cleanup for invalid indexes,
+    // the system may contain paths that no longer exist.
+    // To maintain index validity, invalid indexes are filtered and removed here.
+    QStringList results = index_manager_.search(keywords, true);
+    if (!results.empty()) {
+        // clean up index entries for non-existent files.
+        std::vector<std::string> remove_list;
+        for (int i = 0; i < results.size();) {
+            std::string path = results[i].toStdString();
+            if (!std::filesystem::exists(path)) {
+                remove_list.push_back(std::move(path));
+                results.removeAt(i);
+            } else {
+                ++i;
+            }
+        }
+
+        for (auto&& path : remove_list) {
+            remove_index_delay(std::move(path));
+        }
+    }
+
     return results;
 }
 

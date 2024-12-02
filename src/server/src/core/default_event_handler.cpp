@@ -37,11 +37,9 @@ default_event_handler::default_event_handler(std::string index_dir)
     });
 
     // log::debug("Document size: {}", index_manager_.document_size());
-    // auto results = index_manager_.search_index("test haha");
-    // log::debug("Found {} result(s).", results.size());
-    // for (const auto& record : results) {
-    //     print(record);
-    // }
+    // auto results = index_manager_.search("李", true);
+    // log::debug() << "Found " << results.size() << " result(s).";
+    // qDebug() << results;
 
     // index_manager_.test(L"/data/home/dxnu/Downloads/2024届地区信息.XLSX"); // dxnu md   md
 }

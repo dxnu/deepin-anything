@@ -91,6 +91,15 @@ public slots:
      */
     QStringList search(const QString& path, const QString& keywords, int offset, int max_count);
     
+    /**
+     * Searches all files for a specified keyword and returns a list of matching file names.
+     * 
+     * @param keyword  The keyword to search for in the files.
+     * @return A QStringList containing the paths of all files where the keyword is found.
+     *         If no files are found, an empty list is returned.
+     */
+    QStringList search(const QString& keywords);
+
     bool removePath(const QString& fullPath);
 
     bool hasLFT(const QString& path);

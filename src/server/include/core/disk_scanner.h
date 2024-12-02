@@ -18,6 +18,7 @@ namespace fs = std::filesystem;
 struct disk_scanner {
     static std::vector<std::string> scan(const fs::path& root);
     static bool is_hidden(const fs::path& p);
+    inline static bool stop_scanning = false;
 };
 
 ANYTHING_NAMESPACE_END
